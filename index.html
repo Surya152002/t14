@@ -1,81 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet Map</title>
+  <title>Smart Car Parking System</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.3/leaflet.css" />
-  <script src="https://cdn.jsdelivr.net/leaflet/1.0.3/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
 </head>
 <body>
 
+<h1>Smart Car Parking System</h1>
+
 <div id="map" style="height: 500px"></div>
 
-<script>
-  // Create the Leaflet map and set its initial view
-  var map = L.map('map').setView([51.505, -0.09], 13);
+<p>Select a parking slot:</p>
 
-  // Add the tile layer to the map (in this case, OpenStreetMap)
+<ul id="parking-slots">
+  <li data-latlng="51.5074,-0.1278">Slot 1</li>
+  <li data-latlng="51.5072,-0.1276">Slot 2</li>
+  <li data-latlng="51.5070,-0.1274">Slot 3</li>
+  <li data-latlng="51.5068,-0.1272">Slot 4</li>
+  <li data-latlng="51.5066,-0.1270">Slot 5</li>
+  <li data-latlng="51.5064,-0.1268">Slot 6</li>
+  <li data-latlng="51.5062,-0.1266">Slot 7</li>
+  <li data-latlng="51.5060,-0.1264">Slot 8</li>
+  <li data-latlng="51.5058,-0.1262">Slot 9</li>
+  <li data-latlng="51.5056,-0.1260">Slot 10</li>
+</ul>
+
+<p id="status"></p>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+  var map = L.map('map').setView([51.505, -0.09], 13);
+  
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
     maxZoom: 18
   }).addTo(map);
-
-  // Define an array to hold the selected locations
-  var locations = [];
-
-  // Create a button to add locations to the array
-  var addButton = L.control({position: 'topright'});
-
-  addButton.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'add-button');
-      div.innerHTML = '<button onclick="addLocation()">Add location</button>';
-      return div;
-  };
-
-  addButton.addTo(map);
-
-  // Function to add a location to the array
-  function addLocation() {
-    // Use Leaflet's mouse click event to get the latitude and longitude of the clicked point
-    map.on('click', function(e) {
-      var location = [e.latlng.lat, e.latlng.lng];
-      locations.push(location);
-      // Add a marker at the selected location
-      L.marker(location).addTo(map);
-    });
-  }
-
-  // Create a button to find the shortest path
-  var findButton = L.control({position: 'topright'});
-
-  findButton.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'find-button');
-      div.innerHTML = '<button onclick="findShortestPath()">Find shortest path</button>';
-      return div;
-  };
-
-  findButton.addTo(map);
-
-  // Function to find the shortest path using the selected locations
-  function findShortestPath() {
-    // Use the Leaflet Routing Machine plugin to find the shortest path
-    var router = L.Routing.osrmv1();
-    var waypoints = [];
-    for (var i = 0; i < locations.length; i++) {
-      waypoints.push(L.latLng(locations[i][0], locations[i][1]));
+  
+  var parkingSlots = document.getElementById('parking-slots');
+  
+  parkingSlots.addEventListener('click', function(event) {
+    var slot = event.target;
+    var latlng = slot.getAttribute('data-latlng').split(',');
+    var slotLatLng = L.latLng(latlng[0], latlng[1]);
+    var userLatLng;
+    
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+        var distance = userLatLng.distanceTo(slotLatLng);
+        
+        if (distance < 50) {
+          var status = document.getElementById('status');
+          var points = 1000;
+          
+          status.innerHTML = "You have parked in slot " + slot.innerHTML + ". " + points + " points have been added to your account.";
+        } else {
+          alert("You are not in the vicinity of this parking slot.");
+        }
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
-    router.route(waypoints, function(err, routes) {
-      if (err) {
-        console.log(err);
-      } else {
-        // Display the shortest path on the map
-        L.Routing.line(routes[0]).addTo(map);
-      }
-    });
-  }
+  });
 </script>
 
 </body>
