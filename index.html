@@ -13,6 +13,15 @@
 
 <div id="map" style="height: 500px"></div>
 
+<!-- HTML button to add a location -->
+<button onclick="addLocation()" style="position: absolute; top: 10px; right: 10px;">Add location</button>
+
+<!-- HTML button to find the shortest path -->
+<button onclick="findShortestPath()" style="position: absolute; top: 40px; right: 10px;">Find shortest path</button>
+
+<!-- HTML button to use the user's current location -->
+<button onclick="getCurrentLocation()" style="position: absolute; top: 70px; right: 10px;">Use current location</button>
+
 <script>
   // Create the Leaflet map and set its initial view
   var map = L.map('map').setView([51.505, -0.09], 13);
@@ -26,17 +35,6 @@
   // Define an array to hold the selected locations
   var locations = [];
 
-  // Create a button to add locations to the array
-  var addButton = L.control({position: 'topright'});
-
-  addButton.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'add-button');
-      div.innerHTML = '<button onclick="addLocation()">Add location</button>';
-      return div;
-  };
-
-  addButton.addTo(map);
-
   // Function to add a location to the array
   function addLocation() {
     // Use Leaflet's mouse click event to get the latitude and longitude of the clicked point
@@ -47,27 +45,6 @@
       L.marker(location).addTo(map);
     });
   }
-
-  // Create a button to find the shortest path
-  var findButton = L.control({position: 'topright'});
-
-  findButton.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'find-button');
-      div.innerHTML = '<button onclick="findShortestPath()">Find shortest path</button>';
-      return div;
-  };
-
-  findButton.addTo(map);
-  // Create a button to add the user's current location to the array
-  var currentLocationButton = L.control({position: 'topright'});
-
-  currentLocationButton.onAdd = function (map) {
-      var div = L.DomUtil.create('div', 'current-location-button');
-      div.innerHTML = '<button onclick="getCurrentLocation()">Use current location</button>';
-      return div;
-  };
-
-  currentLocationButton.addTo(map);
 
   // Function to get the user's current location
   function getCurrentLocation() {
@@ -86,15 +63,17 @@
 
   // Function to find the shortest path using the selected locations
   function findShortestPath() {
-  // Use the Leaflet Routing Machine plugin to find the shortest path
-  var router = L.Routing.osrmv1();
-  var waypoints = [];
+    // Use the Leaflet Routing Machine plugin to find the shortest path
+    var router = L.Routing.osrmv1();
+    var waypoints = [];
 
-  // Get the user's current location and add it to the waypoints array
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var currentLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-      waypoints.push(currentLocation);
+    // Get the user's current location and add it to the waypoints array
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var currentLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+        waypoints.push(currentLocation);
+
+        // Add the locations from the locations
 
       // Add the locations from the locations array to the waypoints array
       for (var i = 0; i < locations.length; i++) {
