@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Smart Parking</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-BvB2QeZcL+9V/BpU6Kvot6CpkYSwEbdU6r/4dbx/oIr+4sdrKjX9AD4Wkt8NvTQDjJOSzS0SjxW8Iv0FkRtC0Q==" crossorigin=""/>
-    <!-- Leaflet JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-hIMlLtlVt3oE3b3qPpMI8MvF+1ZjKdX4sWfdRO8TbuQcczUEEY0SUNiWxN8GXv2OuOZop9AG7VUeKjUO7G/1Ew==" crossorigin=""></script>
-</head>
-<body>
-    <!-- Map container -->
-    <div id="mapid" style="height: 500px;"></div>
-    <!-- Check parking button -->
-    <button onclick="checkParking()">Check Parking</button>
-    <!-- JavaScript for Smart Parking -->
-    <script src="parking.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Smart Parking System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"
+     integrity="sha384-HQaPR5ol5KgqyGJfpUoDnR57E6aIbCXUZGBz9Xjk6UtrjKUJymnUyPnJfLTDDMTB"
+     crossorigin=""/>
+    <style>
+      #mapid { height: 400px; }
+      .success { color: green; }
+      .error { color: red; }
+    </style>
+  </head>
+  <body>
+    <h1>Smart Parking System</h1>
+    <p>Please park in the designated parking spot.</p>
+    <div id="mapid"></div>
+    <button id="check-btn">Check if parked in the right spot</button>
+    <div id="result"></div>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"
+     integrity="sha384-VbRv7No1+GP1Jg7h2/mK0Eo7tlqC3s4lNAGkX9+ouOrxf8DL0Ww12eT1FxNjhBxr"
+     crossorigin=""></script>
+    <script src="script.js"></script>
+  </body>
 </html>
