@@ -1,18 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Camera Test</title>
+    <title>Location Access</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
     <script>
-      async function startCamera() {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const video = document.getElementById("video");
-        video.srcObject = stream;
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      }
+      
+      function showPosition(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var location = new google.maps.LatLng(latitude, longitude);
+        var mapOptions = {
+          center: location,
+          zoom: 15
+        };
+        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        var marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          title: "Your Location"
+        });
       }
     </script>
   </head>
-  <body onload="startCamera()">
-    <video id="video" width="640" height="480" autoplay></video>
-    <canvas id="canvas" width="640" height="480"></canvas>
-    <script src="process.py"></script>
+  <body>
+    <h1>Location Access</h1>
+    <button onclick="getLocation()">Get Location</button>
+    <div id="map" style="height: 400px; width: 100%;"></div>
   </body>
 </html>
