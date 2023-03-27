@@ -1,69 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Car Parking System</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Smart Parking</title>
+	<!-- Leaflet CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-BvB2QeZcL+9V/BpU6Kvot6CpkYSwEbdU6r/4dbx/oIr+4sdrKjX9AD4Wkt8NvTQDjJOSzS0SjxW8Iv0FkRtC0Q==" crossorigin=""/>
+	<!-- Leaflet JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-hIMlLtlVt3oE3b3qPpMI8MvF+1ZjKdX4sWfdRO8TbuQcczUEEY0SUNiWxN8GXv2OuOZop9AG7VUeKjUO7G/1Ew==" crossorigin=""></script>
+	<!-- JavaScript for Smart Parking -->
+	<script src="smart-parking.js"></script>
 </head>
 <body>
-
-<h1>Smart Car Parking System</h1>
-
-<div id="map" style="height: 500px"></div>
-
-<p>Select a parking slot:</p>
-
-<ul id="parking-slots">
-  <li data-latlng="51.5074,-0.1278">Slot 1</li>
-  <li data-latlng="51.5072,-0.1276">Slot 2</li>
-  <li data-latlng="51.5070,-0.1274">Slot 3</li>
-  <li data-latlng="51.5068,-0.1272">Slot 4</li>
-  <li data-latlng="51.5066,-0.1270">Slot 5</li>
-  <li data-latlng="51.5064,-0.1268">Slot 6</li>
-  <li data-latlng="51.5062,-0.1266">Slot 7</li>
-  <li data-latlng="51.5060,-0.1264">Slot 8</li>
-  <li data-latlng="51.5058,-0.1262">Slot 9</li>
-  <li data-latlng="51.5056,-0.1260">Slot 10</li>
-</ul>
-
-<p id="status"></p>
-
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
-<script>
-  var map = L.map('map').setView([51.505, -0.09], 13);
-  
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    maxZoom: 18
-  }).addTo(map);
-  
-  var parkingSlots = document.getElementById('parking-slots');
-  
-  parkingSlots.addEventListener('click', function(event) {
-    var slot = event.target;
-    var latlng = slot.getAttribute('data-latlng').split(',');
-    var slotLatLng = L.latLng(latlng[0], latlng[1]);
-    var userLatLng;
-    
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
-        var distance = userLatLng.distanceTo(slotLatLng);
-        
-        if (distance < 50) {
-          var status = document.getElementById('status');
-          var points = 1000;
-          
-          status.innerHTML = "You have parked in slot " + slot.innerHTML + ". " + points + " points have been added to your account.";
-        } else {
-          alert("You are not in the vicinity of this parking slot.");
-        }
-      });
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  });
-</script>
-
+	<!-- Map container -->
+	<div id="mapid" style="height: 500px;"></div>
+	<!-- Check parking button -->
+	<button onclick="checkParking()">Check Parking</button>
 </body>
 </html>
