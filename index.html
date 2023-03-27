@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Smart Parking System</title>
+    <title>Current Location Example</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"
      integrity="sha384-HQaPR5ol5KgqyGJfpUoDnR57E6aIbCXUZGBz9Xjk6UtrjKUJymnUyPnJfLTDDMTB"
      crossorigin=""/>
@@ -13,10 +13,8 @@
     </style>
   </head>
   <body>
-    <h1>Smart Parking System</h1>
-    <p>Please park in the designated parking spot.</p>
+    <h1>Current Location Example</h1>
     <div id="mapid"></div>
-    <button id="check-btn">Check if parked in the right spot</button>
     <div id="result"></div>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"
      integrity="sha384-VbRv7No1+GP1Jg7h2/mK0Eo7tlqC3s4lNAGkX9+ouOrxf8DL0Ww12eT1FxNjhBxr"
@@ -29,16 +27,10 @@
         maxZoom: 18,
       }).addTo(map);
 
-      var marker = L.marker([37.7749, -122.4194]).addTo(map);
-
       function onLocationFound(e) {
-        var radius = e.accuracy / 2;
-
         L.marker(e.latlng).addTo(map)
-          .bindPopup("You are within " + radius + " meters of this point").openPopup();
-
-        // Update marker position with user's current location
-        marker.setLatLng(e.latlng);
+          .bindPopup("You are here").openPopup();
+        document.getElementById("result").innerHTML = "<p class='success'>Your current location is: " + e.latlng + "</p>";
       }
 
       function onLocationError(e) {
@@ -48,18 +40,7 @@
       map.on('locationfound', onLocationFound);
       map.on('locationerror', onLocationError);
 
-      function checkParkingSpot() {
-        var currentLocation = marker.getLatLng();
-        var distance = currentLocation.distanceTo(map.getCenter());
-
-        if (distance < 50) {
-          document.getElementById("result").innerHTML = "<p class='success'>You have parked in the correct spot.</p>";
-        } else {
-          document.getElementById("result").innerHTML = "<p class='error'>You have not parked in the correct spot.</p>";
-        }
-      }
-
-      document.getElementById("check-btn").addEventListener("click", checkParkingSpot);
+      map.locate({setView: true, maxZoom: 16});
     </script>
   </body>
 </html>
