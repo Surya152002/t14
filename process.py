@@ -1,17 +1,32 @@
 import cv2
 import numpy as np
+import darknet
+
 from flask import Flask, render_template, Response
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
 def detect_plate(frame):
-    # Perform image processing and detect the number plate here
-    # Return the processed image with the number plate highlighted
+    # Load the YOLOv3 model and configuration files
+    net = darknet.load_net_custom("yolov3-custom.cfg", "yolov3-custom.weights", 0, 1)
+    meta = darknet.load_meta("obj.data")
     
-    # Example code to draw a rectangle around a detected number plate
-    x, y, w, h = 100, 100, 200, 50
-    cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+    # Convert the frame to a darknet image
+    darknet_image = darknet.make_image(frame.shape[1], frame.shape[0], 3)
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    darknet.copy_image_from_bytes(darknet_image, frame_rgb.tobytes())
+    
+    # Use YOLOv3 to detect license plates
+    detections = darknet.detect_image(net, meta, darknet_image)
+    for detection in detections:
+        if detection[0].decode() == 'license_plate':
+            x, y, w, h = detection[2]
+            x1 = int(x - w / 2)
+            y1 = int(y - h / 2)
+            x2 = int(x + w / 2)
+            y2 = int(y + h / 2)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
     
     return frame
 
