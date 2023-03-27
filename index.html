@@ -58,24 +58,64 @@
   };
 
   findButton.addTo(map);
+  // Create a button to add the user's current location to the array
+  var currentLocationButton = L.control({position: 'topright'});
+
+  currentLocationButton.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'current-location-button');
+      div.innerHTML = '<button onclick="getCurrentLocation()">Use current location</button>';
+      return div;
+  };
+
+  currentLocationButton.addTo(map);
+
+  // Function to get the user's current location
+  function getCurrentLocation() {
+    // Check if the browser supports geolocation
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var location = [position.coords.latitude, position.coords.longitude];
+        locations.push(location);
+        // Add a marker at the user's current location
+        L.marker(location).addTo(map);
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
 
   // Function to find the shortest path using the selected locations
   function findShortestPath() {
-    // Use the Leaflet Routing Machine plugin to find the shortest path
-    var router = L.Routing.osrmv1();
-    var waypoints = [];
-    for (var i = 0; i < locations.length; i++) {
-      waypoints.push(L.latLng(locations[i][0], locations[i][1]));
-    }
-    router.route(waypoints, function(err, routes) {
-      if (err) {
-        console.log(err);
-      } else {
-        // Display the shortest path on the map
-        L.Routing.line(routes[0]).addTo(map);
+  // Use the Leaflet Routing Machine plugin to find the shortest path
+  var router = L.Routing.osrmv1();
+  var waypoints = [];
+
+  // Get the user's current location and add it to the waypoints array
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var currentLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+      waypoints.push(currentLocation);
+
+      // Add the locations from the locations array to the waypoints array
+      for (var i = 0; i < locations.length; i++) {
+        waypoints.push(L.latLng(locations[i][0], locations[i][1]));
       }
+
+      // Find the shortest path
+      router.route(waypoints, function(err, routes) {
+        if (err) {
+          console.log(err);
+        } else {
+          // Display the shortest path on the map
+          L.Routing.line(routes[0]).addTo(map);
+        }
+      });
     });
+  } else {
+    alert("Geolocation is not supported by this browser.");
   }
+}
+
 </script>
 
 </body>
